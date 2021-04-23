@@ -2,23 +2,23 @@ import React, { Component } from 'react'
 import { ScrollView } from 'react-navigation'
 import { Text, FlatList } from 'react-native'
 import { Card, ListItem } from 'react-native-elements'
-import { connect } from 'react-redux';
-import { baseUrl } from '../shared/baseUrl';
-import Loading from './LoadingComponent';
+import { connect } from 'react-redux'
+import { baseUrl } from '../shared/baseUrl'
+import Loading from './LoadingComponent'
+import * as Animatable from 'react-native-animatable'
 
 const mapStateToProps = state => {
   return {
-      partners: state.partners
-  };
-};
-
+    partners: state.partners
+  }
+}
 
 function renderPartner ({ item }) {
   return (
     <ListItem
       title={item.name}
       subtitle={item.description}
-      leftAvatar={{source: {uri: baseUrl + item.image}}}
+      leftAvatar={{ source: { uri: baseUrl + item.image } }}
     />
   )
 
@@ -28,63 +28,58 @@ function renderPartner ({ item }) {
 function Mission (props) {
   return (
     <Card title='Our Mission'>
-      <Text style={{ margin: 10 }}>
-        {props.statement}
-      </Text>
+      <Text style={{ margin: 10 }}>{props.statement}</Text>
     </Card>
   )
 }
 
 class AboutComponent extends Component {
-
-
   static navigationOptions = {
     title: 'About Us'
   }
 
-  render() {
-    const renderPartner = ({item}) => {
-        return (
-            <ListItem
-                title={item.name}
-                subtitle={item.description}
-                leftAvatar={{source: {uri: baseUrl + item.image}}}
-            />
-        );
-    };
+  render () {
+    const renderPartner = ({ item }) => {
+      return (
+        <ListItem
+          title={item.name}
+          subtitle={item.description}
+          leftAvatar={{ source: { uri: baseUrl + item.image } }}
+        />
+      )
+    }
 
     if (this.props.partners.isLoading) {
-        return (
-            <ScrollView>
-                <Mission />
-                <Card
-                    title='Community Partners'>
-                    <Loading />
-                </Card>
-            </ScrollView>
-        );
+      return (
+        <ScrollView>
+          <Mission />
+          <Card title='Community Partners'>
+            <Loading />
+          </Card>
+        </ScrollView>
+      )
     }
     if (this.props.partners.errMess) {
-        return (
-            <ScrollView>
-                <Mission />
-                <Card
-                    title='Community Partners'>
-                    <Text>{this.props.partners.errMess}</Text>
-                </Card>
-            </ScrollView>
-        );
+      return (
+        <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+          <Mission />
+          <Card title='Community Partners'>
+            <Text>{this.props.partners.errMess}</Text>
+          </Card>
+        </Animatable.View>
+      )
     }
     return (
-      <ScrollView>
-        <Mission 
-        statement="We present a curated database of the best campsites in the vast woods
+      <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+        <Mission
+          statement='We present a curated database of the best campsites in the vast woods
         and backcountry of the World Wide Web Wilderness. We increase access to
         adventure for the public while promoting safe and respectful use of
         resources. The expert wilderness trekkers on our staff personally verify
         each campsite to make sure that they are up to our standards. We also
         present a platform for campers to share reviews on campsites they have
-        visited with each other."/>
+        visited with each other.'
+        />
         <Card title='Community Partners'>
           <FlatList
             data={this.props.partners.partners}
@@ -92,9 +87,9 @@ class AboutComponent extends Component {
             keyExtractor={item => item.id.toString()}
           />
         </Card>
-      </ScrollView>
+      </Animatable.View>
     )
   }
 }
 
-export default connect(mapStateToProps)(AboutComponent);
+export default connect(mapStateToProps)(AboutComponent)

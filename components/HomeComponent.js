@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 // import ScrollView
-import { View, Text, ScrollView  } from 'react-native';
+import { View, Text, Animated } from 'react-native'
 // import Card
-import { Card } from 'react-native-elements';
-// import all DataTypes from 
+import { Card } from 'react-native-elements'
+// import all DataTypes from
 import { baseUrl } from '../shared/baseUrl'
-import { connect } from 'react-redux';
-import Loading from './LoadingComponent';
+import { connect } from 'react-redux'
+import Loading from './LoadingComponent'
 
 // THIS IS WERE YOU HAVE CAMPSITEINFO USE REDUX STATE
 const mapStateToProps = state => {
@@ -17,82 +17,100 @@ const mapStateToProps = state => {
   }
 }
 
-// WE NEED TO CREATE A RENDERITEM COMPONENT, TO DESTRUCTOR, AND DISPLAY THE DATA 
+// WE NEED TO CREATE A RENDERITEM COMPONENT, TO DESTRUCTOR, AND DISPLAY THE DATA
 // WE WILL RETURN A FORMATTED CARD.
 
-function RenderItem(props) {
-    
-    
-    const {item} = props;
+function RenderItem (props) {
+  const { item } = props
 
-    if (props.isLoading) {
-        return <Loading />;
-    }
-    if (props.errMess) {
-        return (
-            <View>
-                <Text>{props.errMess}</Text>
-            </View>
-        );
-    }
-    if (item) {
-        return (
-            <Card
-                featuredTitle={item.name}
-                image={{uri: baseUrl + item.image}}
-            >
-                <Text style={{margin: 10}}>
-                    {item.description}
-                </Text>
-            </Card>
-        );
-    }
-    return <View />;
+  if (props.isLoading) {
+    return <Loading />
+  }
+  if (props.errMess) {
+    return (
+      <View>
+        <Text>{props.errMess}</Text>
+      </View>
+    )
+  }
+  if (item) {
+    return (
+      <Card featuredTitle={item.name} image={{ uri: baseUrl + item.image }}>
+        <Text style={{ margin: 10 }}>{item.description}</Text>
+      </Card>
+    )
+  }
+  return <View />
 }
-
-
 
 class Home extends Component {
-   
-
-
-    // Return a tilte of "Home"
-    static navigationOptions = {
-        title: 'Home'
+  constructor (props) {
+    super(props)
+    this.state = {
+      scaleValue: new Animated.Value(0)
     }
+  }
 
-    // We will return a simple view with text "Home Component"
-    // HERE WE ARE SETTING UP A SCROLLVIEW COMPONENT
-    // SCROLLVIEW ACTS LIKE FLATLIST FOR DISPLAYING DATA_TYPES
-    // IMPORTANT NOTE: SCROLLVIEW USES "LAZY LOADING" ... SEE NOTES
-    // A MORE EFFICENT WAY OF LOADING ... IF YOU HAVE A LONG LIST,
-    // USE FLATLIST, BECAUSE WE HAVE 3 ITEMS SCROLLVIEW WOULD BE 
-    // OPTIMAL
+  animate () {
+    Animated.timing(this.state.scaleValue, {
+      toValue: 1,
+      duration: 1500,
+      useNativeDriver: true
+    }).start()
+  }
 
-    render() {
-        return (
-            <ScrollView>
-                {/* // WE WILL USE RenderItem TO DISPLAY DIFFERENT SET OF DATA
+  componentDidMount () {
+    this.animate()
+  }
+
+  // Return a tilte of "Home"
+  static navigationOptions = {
+    title: 'Home'
+  }
+
+  // We will return a simple view with text "Home Component"
+  // HERE WE ARE SETTING UP A SCROLLVIEW COMPONENT
+  // SCROLLVIEW ACTS LIKE FLATLIST FOR DISPLAYING DATA_TYPES
+  // IMPORTANT NOTE: SCROLLVIEW USES "LAZY LOADING" ... SEE NOTES
+  // A MORE EFFICENT WAY OF LOADING ... IF YOU HAVE A LONG LIST,
+  // USE FLATLIST, BECAUSE WE HAVE 3 ITEMS SCROLLVIEW WOULD BE
+  // OPTIMAL
+
+  render () {
+    return (
+      <Animated.ScrollView
+        style={{ transform: [{ scale: this.state.scaleValue }] }}
+      >
+        {/* // WE WILL USE RenderItem TO DISPLAY DIFFERENT SET OF DATA
                 // NOTE: "featured" will either return true or false ... check data files */}
-                <RenderItem
-                    item={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
-                    isLoading={this.props.campsites.isLoading}
-                    errMess={this.props.campsites.errMess}
-                />
-                <RenderItem
-                    item={this.props.promotions.promotions.filter(promotion => promotion.featured)[0]}
-                    isLoading={this.props.promotions.isLoading}
-                    errMess={this.props.promotions.errMess}
-                />
-                <RenderItem
-                    item={this.props.partners.partners.filter(partner => partner.featured)[0]}
-                    isLoading={this.props.partners.isLoading}
-                    errMess={this.props.partners.errMess}
-                />
-            </ScrollView>
-        )
-    }
-
+        <RenderItem
+          item={
+            this.props.campsites.campsites.filter(
+              campsite => campsite.featured
+            )[0]
+          }
+          isLoading={this.props.campsites.isLoading}
+          errMess={this.props.campsites.errMess}
+        />
+        <RenderItem
+          item={
+            this.props.promotions.promotions.filter(
+              promotion => promotion.featured
+            )[0]
+          }
+          isLoading={this.props.promotions.isLoading}
+          errMess={this.props.promotions.errMess}
+        />
+        <RenderItem
+          item={
+            this.props.partners.partners.filter(partner => partner.featured)[0]
+          }
+          isLoading={this.props.partners.isLoading}
+          errMess={this.props.partners.errMess}
+        />
+      </Animated.ScrollView>
+    )
+  }
 }
- 
-export default connect(mapStateToProps)(Home);
+
+export default connect(mapStateToProps)(Home)

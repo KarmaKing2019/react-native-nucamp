@@ -4,19 +4,42 @@ import { View, Text, ScrollView  } from 'react-native';
 // import Card
 import { Card } from 'react-native-elements';
 // import all DataTypes from 
-import { CAMPSITES } from '../shared/campsites';
-import { PROMOTIONS } from '../shared/promotions';
-import { PARTNERS } from '../shared/partners';
+import { baseUrl } from '../shared/baseUrl'
+import { connect } from 'react-redux';
+import Loading from './LoadingComponent';
+
+// THIS IS WERE YOU HAVE CAMPSITEINFO USE REDUX STATE
+const mapStateToProps = state => {
+  return {
+    campsites: state.campsites,
+    promotions: state.promotions,
+    partners: state.partners
+  }
+}
 
 // WE NEED TO CREATE A RENDERITEM COMPONENT, TO DESTRUCTOR, AND DISPLAY THE DATA 
 // WE WILL RETURN A FORMATTED CARD.
 
-function RenderItem({item}) {
+function RenderItem(props) {
+    
+    
+    const {item} = props;
+
+    if (props.isLoading) {
+        return <Loading />;
+    }
+    if (props.errMess) {
+        return (
+            <View>
+                <Text>{props.errMess}</Text>
+            </View>
+        );
+    }
     if (item) {
         return (
             <Card
                 featuredTitle={item.name}
-                image={require('./images/react-lake.jpg')}
+                image={{uri: baseUrl + item.image}}
             >
                 <Text style={{margin: 10}}>
                     {item.description}
@@ -31,15 +54,7 @@ function RenderItem({item}) {
 
 class Home extends Component {
    
-    // Create Constructor to bring the data into the class state
-    constructor(props) {
-        super(props);
-        this.state = {
-            campsites: CAMPSITES,
-            promotions: PROMOTIONS,
-            partners: PARTNERS
-        }
-    }
+
 
     // Return a tilte of "Home"
     static navigationOptions = {
@@ -59,14 +74,20 @@ class Home extends Component {
             <ScrollView>
                 {/* // WE WILL USE RenderItem TO DISPLAY DIFFERENT SET OF DATA
                 // NOTE: "featured" will either return true or false ... check data files */}
-                <RenderItem 
-                    item={this.state.campsites.filter(campsite => campsite.featured)[0]}
+                <RenderItem
+                    item={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
+                    isLoading={this.props.campsites.isLoading}
+                    errMess={this.props.campsites.errMess}
                 />
-                <RenderItem 
-                    item={this.state.promotions.filter(promotion => promotion.featured)[0]}
+                <RenderItem
+                    item={this.props.promotions.promotions.filter(promotion => promotion.featured)[0]}
+                    isLoading={this.props.promotions.isLoading}
+                    errMess={this.props.promotions.errMess}
                 />
-                <RenderItem 
-                    item={this.state.partners.filter(partner => partner.featured)[0]}
+                <RenderItem
+                    item={this.props.partners.partners.filter(partner => partner.featured)[0]}
+                    isLoading={this.props.partners.isLoading}
+                    errMess={this.props.partners.errMess}
                 />
             </ScrollView>
         )
@@ -74,4 +95,4 @@ class Home extends Component {
 
 }
  
-export default Home;
+export default connect(mapStateToProps)(Home);

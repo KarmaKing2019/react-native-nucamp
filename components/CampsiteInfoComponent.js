@@ -38,6 +38,7 @@ function RenderCampsite (props) {
   const view = React.createRef()
 
   const recognizeDrag = ({ dx }) => (dx < -200 ? true : false)
+  const recognizeComment = ({ dx }) => (dx > 200 ? true : false)
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -70,7 +71,14 @@ function RenderCampsite (props) {
           ],
           { cancelable: false }
         )
+      } else if (recognizeComment(gestureState)) {
+        //=== testing ===
+        //console.log('swipe left to right')
+        //console.log(props)
+
+        props.toggleModal()
       }
+
       return true
     }
   })
@@ -172,7 +180,7 @@ class CampsiteInfo extends Component {
     }
   }
 
-  toggleModal () {
+  toggleModal = () => {
     this.setState({ showModal: !this.state.showModal })
   }
 
@@ -222,6 +230,7 @@ class CampsiteInfo extends Component {
           favorite={this.props.favorites.includes(campsiteId)}
           markFavorite={() => this.markFavorite(campsiteId)}
           onShowModal={() => this.toggleModal()}
+          toggleModal={this.toggleModal}
         />
 
         <RenderComments comments={comments} />

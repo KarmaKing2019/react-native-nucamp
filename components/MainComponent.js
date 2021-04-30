@@ -26,6 +26,7 @@ import {
 } from '../redux/ActionCreators'
 import Reservation from './ReservationComponent'
 import Favorites from './FavoritesComponent'
+import Login from './LoginComponent'
 
 // SETTING UP: WE ARE ONLY CREATING ONE STACK NAVIGATOR
 const mapDispatchToProps = {
@@ -96,7 +97,7 @@ const ReservationNavigator = createStackNavigator(
 
 const FavoritesNavigator = createStackNavigator(
   {
-    Reservation: { screen: Favorites }
+    Favorites: { screen: Favorites }
   },
   {
     defaultNavigationOptions: ({ navigation }) => ({
@@ -110,6 +111,31 @@ const FavoritesNavigator = createStackNavigator(
       headerLeft: (
         <Icon
           name='heart'
+          type='font-awesome'
+          iconStyle={styles.stackIcon}
+          onPress={() => navigation.toggleDrawer()}
+        />
+      )
+    })
+  }
+)
+
+const LoginNavigator = createStackNavigator(
+  {
+    Login: { screen: Login }
+  },
+  {
+    defaultNavigationOptions: ({ navigation }) => ({
+      headerStyle: {
+        backgroundColor: '#5637DD'
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        color: '#fff'
+      },
+      headerLeft: (
+        <Icon
+          name='sign-in'
           type='font-awesome'
           iconStyle={styles.stackIcon}
           onPress={() => navigation.toggleDrawer()}
@@ -248,6 +274,19 @@ const CustomDrawerContentComponent = props => (
 // ADD THE DRAWER NAVIGATOR
 const MainNavigator = createDrawerNavigator(
   {
+    Login: {
+      screen: LoginNavigator,
+      navigationOptions: {
+        drawerIcon: ({ tintColor }) => (
+          <Icon
+            name='sign-in'
+            type='font-awesome'
+            size={24}
+            color={tintColor}
+          />
+        )
+      }
+    },
     Home: {
       screen: HomeNavigator,
       navigationOptions: {
@@ -312,6 +351,7 @@ const MainNavigator = createDrawerNavigator(
     }
   },
   {
+    initialRouteName: 'Home',
     drawerBackgroundColor: '#CEC8FF',
     contentComponent: CustomDrawerContentComponent
   }
